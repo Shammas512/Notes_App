@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notesapp/notes%20main/notes.dart';
+import 'package:notesapp/personal_details/user_details.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
      
-      home: NotesScreen(),
+      home: UserDetails(),
     );
   }
 }
