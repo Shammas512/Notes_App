@@ -1,6 +1,7 @@
+import 'dart:convert';  // Import for JSON encoding
 import 'dart:io';
 
-
+import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:notesapp/personal_details/container_user.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,11 +14,56 @@ class UserDetails extends StatefulWidget {
 }
 
 class _UserDetailsState extends State<UserDetails> {
+  TextEditingController name = TextEditingController();
+  TextEditingController age = TextEditingController();
+  TextEditingController email = TextEditingController();
+
+  void postingApi(String namee, String agee, String emaile) async {
+    try {
+      Response response = await post(
+        Uri.parse(
+          'https://crudcrud.com/api/acaf3a12056c4c5cb7ab403172ae48b6/unicorns',
+        ),
+        headers: {
+          "Content-Type": "application/json",  // Specify content type
+        },
+        body: jsonEncode({
+          "name": namee,
+          "age": agee,
+          "email": emaile,
+        }),
+      );
+
+
+      if (response.statusCode == 201) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Details Added On Server"),
+          backgroundColor: Colors.green,
+          duration: Duration(milliseconds: 700),
+        ));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Failed"),
+          backgroundColor: Colors.red,
+          duration: Duration(milliseconds: 700),
+        ));
+      }
+    } catch (e) {
+      print("Error: $e");  // More detailed error logging
+    }
+
+    // setState(() {
+    //   name.clear();
+    //   age.clear();
+    //   email.clear();
+    // });
+  }
+
   String? selectedLocation;
   File? image;
+
   Future<void> getimage() async {
-    final pickedimage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedimage = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedimage == null) {
       return;
     }
@@ -47,72 +93,26 @@ class _UserDetailsState extends State<UserDetails> {
                       radius: 70,
                       backgroundImage: NetworkImage(
                           'https://thumbs.dreamstime.com/b/person-icon-flat-vector-illustration-design-isolated-white-background-156044979.jpg'),
-                    )),
-                  ),
-            const SizedBox(
-              height: 20,
-            ),
+                    ))),
+            const SizedBox(height: 20),
             ContainerUser(
               text: 'Enter Your Name',
+              controller: name,
             ),
-
-            const SizedBox(
-              height: 20,
+            const SizedBox(height: 20),
+            ContainerUser(
+              text: 'Enter Your Age',
+              controller: age,
             ),
-
-            ContainerUser(text: 'Enter Your Username'),
-
-            const SizedBox(
-              height: 20,
-            ),
-
+            const SizedBox(height: 20),
             ContainerUser(
               text: 'Enter Your Email',
+              controller: email,
             ),
-
-            const SizedBox(
-              height: 20,
-            ),
-
-            // ContainerUser(text: 'Select Your Location',),
-            Container(
-              height: 70,
-              width: 230,
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.deepPurple[100],
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: DropdownButton<String>(
-                value: selectedLocation,
-                hint: const Text('Select Location'),
-                isExpanded: true,
-                underline: const SizedBox(),
-                items: ['New York', 'Berlin', 'Tokyo', 'London','Pakistan']
-                    .map((location) => DropdownMenuItem<String>(
-                          value: location,
-                          child: Text(location),
-                        ))
-                    .toList(),
-                onChanged: (nwValue) {
-                  setState(() {});
-                  selectedLocation = nwValue!;
-                },
-              ),
-            ),
-
-            const SizedBox(
-              height: 50,
-            ),
+            const SizedBox(height: 50),
             InkWell(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                    "Your Informations Is Recorded",
-                  ),
-                  backgroundColor: Colors.green,
-                  duration: Duration(seconds: 1),
-                ));
+                postingApi(name.text, age.text, email.text);
               },
               child: Container(
                 height: 60,
@@ -121,7 +121,7 @@ class _UserDetailsState extends State<UserDetails> {
                     color: Colors.greenAccent[700],
                     borderRadius: BorderRadius.circular(5)),
                 child: const Center(
-                  child: Text("Regeiter"),
+                  child: Text("Register"),
                 ),
               ),
             ),

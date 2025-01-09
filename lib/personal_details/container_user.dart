@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class ContainerUser extends StatelessWidget {
   String text;
-  ContainerUser({super.key,required this.text});
+   final TextEditingController controller;
+  ContainerUser({super.key,required this.text, required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,7 @@ class ContainerUser extends StatelessWidget {
           borderRadius: BorderRadius.circular(13)),
       child: Center(
         child: TextField(
+          controller: controller ,
           textAlign: TextAlign.center,
           decoration: InputDecoration(
             border: InputBorder.none,
